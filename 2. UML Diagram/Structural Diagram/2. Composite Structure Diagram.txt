@@ -1,0 +1,142 @@
+		Online Shopping Cart
+Class: ShoppingCart
+
+Internal Parts: ProductItem (represents individual products in the cart)
+
+Interaction Points:
+ShoppingCart interacts with ProductItem through addItem() and removeItem() methods.
+ShoppingCart interacts with Order when a user places an order.
+
++-------------------------+
+|    ShoppingCart         |
++-------------------------+
+| - cartID                |
+| - items                 |
++-------------------------+
+| + addItem()             |
+| + removeItem()          |
++-------------------------+
+         |
+         | contains
+         v
++-------------------------+
+|    ProductItem          |
++-------------------------+
+| - productID             |
+| - name                  |
+| - price                 |
++-------------------------+
+         |
+         | interacts with
+         v
++-------------------------+
+|         Order           |
++-------------------------+
+| - orderID               |
+| - date                  |
++-------------------------+
+| + placeOrder()          |
++-------------------------+
+
+
+			CODE
+import java.util.ArrayList;
+import java.util.List;
+
+class ProductItem {
+    private int productID;
+    private String name;
+    private double price;
+
+    public ProductItem(int productID, String name, double price) {
+        this.productID = productID;
+        this.name = name;
+        this.price = price;
+    }
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+class ShoppingCart {
+    private int cartID;
+    private List<ProductItem> items;
+
+    public ShoppingCart() {
+        this.cartID = 0;
+        this.items = new ArrayList<>();
+    }
+
+    public void addItem(ProductItem product) {
+        items.add(product);
+    }
+
+    public void removeItem(ProductItem product) {
+        items.remove(product);
+    }
+
+    public List<ProductItem> getItems() {
+        return items;
+    }
+}
+
+class Order {
+    private int orderID;
+    private String date;
+    private List<ProductItem> items;
+
+    public Order(int orderID, String date) {
+        this.orderID = orderID;
+        this.date = date;
+        this.items = new ArrayList<>();
+    }
+
+    public void placeOrder(ShoppingCart cart) {
+        this.items = new ArrayList<>(cart.getItems());
+    }
+
+    public int getOrderID() {
+        return orderID;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public List<ProductItem> getItems() {
+        return items;
+    }
+}
+
+// Example usage
+public class Main {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+        ProductItem product1 = new ProductItem(1, "Laptop", 1000.0);
+
+        // Adding product to cart
+        cart.addItem(product1);
+
+        // Placing an order
+        Order order = new Order(1, "2025-02-20");
+        order.placeOrder(cart);
+
+        // Printing order details
+        System.out.println("Order ID: " + order.getOrderID());
+        System.out.println("Order Date: " + order.getDate());
+        System.out.println("Items in order: ");
+        for (ProductItem product : order.getItems()) {
+            System.out.println("- " + product.getName() + " ($" + product.getPrice() + ")");
+        }
+    }
+}
+

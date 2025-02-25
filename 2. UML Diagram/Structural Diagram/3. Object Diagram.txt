@@ -1,0 +1,123 @@
+		Online Shopping Cart
+Instances:
+user1: User with username = "john_doe"
+product1: Product with name = "Laptop", price = 1000
+cart1: ShoppingCart with items = [product1]
+
+Relationships:
+user1 has cart1.
+cart1 contains product1.
+
+
++-------------------------+
+|        User             |
++-------------------------+
+| - username: "john_doe"  |
++-------------------------+
+        |
+        | has
+        v
++-------------------------+
+|    ShoppingCart         |
++-------------------------+
+| - items: [product1]     |
++-------------------------+
+        |
+        | contains
+        v
++-------------------------+
+|    ProductItem          |
++-------------------------+
+| - name: "Laptop"        |
+| - price: 1000           |
++-------------------------+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+class User {
+    private String username;
+    private String password;
+    private ShoppingCart shoppingCart;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.shoppingCart = new ShoppingCart();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+}
+
+class Product {
+    private int productID;
+    private String name;
+    private double price;
+
+    public Product(int productID, String name, double price) {
+        this.productID = productID;
+        this.name = name;
+        this.price = price;
+    }
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+class ShoppingCart {
+    private int cartID;
+    private List<Product> items;
+
+    public ShoppingCart() {
+        this.cartID = 0;
+        this.items = new ArrayList<>();
+    }
+
+    public void addItem(Product product) {
+        items.add(product);
+    }
+
+    public void removeItem(Product product) {
+        items.remove(product);
+    }
+
+    public List<Product> getItems() {
+        return items;
+    }
+}
+
+// Example usage
+public class Main {
+    public static void main(String[] args) {
+        // Instances
+        User user1 = new User("john_doe", "password123");
+        Product product1 = new Product(1, "Laptop", 1000.0);
+        ShoppingCart cart1 = user1.getShoppingCart();
+
+        // Relationships
+        cart1.addItem(product1);
+
+        // Print details
+        System.out.println("Username: " + user1.getUsername());
+        System.out.println("Shopping Cart Items:");
+        for (Product product : cart1.getItems()) {
+            System.out.println("- " + product.getName() + " ($" + product.getPrice() + ")");
+        }
+    }
+}

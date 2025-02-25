@@ -1,0 +1,49 @@
+		Online Shopping Cart
+Packages:
+UserManagement (contains classes related to user operations)
+ProductManagement (contains classes related to products)
+CartManagement (contains classes related to shopping cart)
+OrderProcessing (contains classes related to order handling)
+
+Dependencies:
+UserManagement depends on CartManagement for user-specific cart operations.
+CartManagement depends on ProductManagement for adding/removing products.
+OrderProcessing depends on CartManagement for processing cart items into orders.
+
+
++-------------------------+
+|  UserManagement         |
++-------------------------+
+| + User                  |
+| + login()               |
+| + register()            |
++-------------------------+
+         |
+         | depends on
+         v
++-------------------------+
+|  CartManagement         |
++-------------------------+
+| + ShoppingCart          |
+| + addItem()             |
+| + removeItem()          |
++-------------------------+
+         |
+         | depends on
+         v
++-------------------------+
+| ProductManagement       |
++-------------------------+
+| + Product               |
+| + getProductDetails()   |
+| + updateInventory()     |
++-------------------------+
+         |
+         | depends on
+         v
++-------------------------+
+|  OrderProcessing        |
++-------------------------+
+| + Order                 |
+| + placeOrder()          |
++-------------------------+

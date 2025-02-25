@@ -1,0 +1,187 @@
+		Online Shopping Cart
+Classes: User, Product, ShoppingCart, Order
+
+Attributes and Methods:
+User: username, password, login(), register()
+Product: productID, name, price, addToCart()
+ShoppingCart: cartID, items, addItem(), removeItem()
+Order: orderID, date, placeOrder()
+
+Relationships:
+A User can have a ShoppingCart.
+ShoppingCart contains multiple Products.
+A User can place multiple Orders.
+
+
+		SOLUTION
++-----------------+
+|      User       |
++-----------------+
+| - username      |
+| - password      |
++-----------------+
+| + login()       |
+| + register()    |
++-----------------+
+           |1          |1
+           |           |
+           |           |
+           |           |
+           |1          |
++-----------------+    |      *+----------------+
+|  ShoppingCart   |    +-------|    Order       |
++-----------------+            +----------------+
+| - cartID        |            | - orderID      |
+| - items         |            | - date         |
++-----------------+            +----------------+
+| + addItem()     |            | + placeOrder() |
+| + removeItem()  |            +----------------+
++-----------------+
+           |*
+           |
+           |
+           |
+           |1
++-----------------+
+|    Product      |
++-----------------+
+| - productID     |
+| - name          |
+| - price         |
++-----------------+
+| + addToCart()   |
++-----------------+
+
+
+		HERE ARE CODE
+class User {
+    private String username;
+    private String password;
+    private ShoppingCart shoppingCart;
+    private List<Order> orders;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.shoppingCart = new ShoppingCart();
+        this.orders = new ArrayList<>();
+    }
+
+    public boolean login(String username, String password) {
+        return this.username.equals(username) && this.password.equals(password);
+    }
+
+    public void register(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+}
+
+class Product {
+    private int productID;
+    private String name;
+    private double price;
+
+    public Product(int productID, String name, double price) {
+        this.productID = productID;
+        this.name = name;
+        this.price = price;
+    }
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void addToCart(ShoppingCart cart) {
+        cart.addItem(this);
+    }
+}
+
+class ShoppingCart {
+    private int cartID;
+    private List<Product> items;
+
+    public ShoppingCart() {
+        this.cartID = 0;
+        this.items = new ArrayList<>();
+    }
+
+    public void addItem(Product product) {
+        items.add(product);
+    }
+
+    public void removeItem(Product product) {
+        items.remove(product);
+    }
+
+    public List<Product> getItems() {
+        return items;
+    }
+}
+
+class Order {
+    private int orderID;
+    private String date;
+    private List<Product> items;
+
+    public Order(int orderID, String date, List<Product> items) {
+        this.orderID = orderID;
+        this.date = date;
+        this.items = new ArrayList<>(items);
+    }
+
+    public int getOrderID() {
+        return orderID;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public List<Product> getItems() {
+        return items;
+    }
+
+    public void placeOrder(ShoppingCart cart) {
+        this.items = new ArrayList<>(cart.getItems());
+    }
+}
+
+// Example usage
+public class Main {
+    public static void main(String[] args) {
+        User user1 = new User("john_doe", "password123");
+        Product product1 = new Product(1, "Laptop", 1000.0);
+
+        // User adding product to cart
+        product1.addToCart(user1.getShoppingCart());
+
+        // Placing an order
+        Order order1 = new Order(1, "2025-02-20", user1.getShoppingCart().getItems());
+        user1.getOrders().add(order1);
+
+        // Printing order details
+        System.out.println("Order ID: " + order1.getOrderID());
+        System.out.println("Order Date: " + order1.getDate());
+        System.out.println("Items in order: ");
+        for (Product product : order1.getItems()) {
+            System.out.println("- " + product.getName() + " ($" + product.getPrice() + ")");
+        }
+    }
+}

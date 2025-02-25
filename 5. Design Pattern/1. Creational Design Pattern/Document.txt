@@ -1,0 +1,275 @@
+Creational Design Patterns :
+They provide various object creation mechanisms, which increase the flexibility and reuse of existing code. 
+
+
+Problem : E-commerce platforms 
+Singleton Pattern → Payment Gateway (ensuring only one payment processor instance)
+Razorpay, Stripe, PhonePe …
+Only one instance is needed for the payment gateway → Singleton pattern
+
+package org.example.model;
+
+
+
+
+// Singleton Design Pattern
+public class PaymentGateway {
+   private static volatile PaymentGateway paymentGatewayInstance;
+   PaymentGateway(){
+       System.out.println("Initializing Payment Gateway...");
+   }
+
+
+   public static PaymentGateway getPaymentGatewayInstance(){
+       if(paymentGatewayInstance == null){
+           synchronized (PaymentGateway.class){
+               if(paymentGatewayInstance == null){
+                   paymentGatewayInstance = new PaymentGateway();
+               }
+           }
+       }
+       return paymentGatewayInstance;
+   }
+
+
+   public void processPayment( String orderId, double amount){
+       System.out.println("Processing payment of Rs. "+ amount + " for the order ID " + orderId);
+   }
+}
+
+
+public class Main {
+   public static void main(String[] args) {
+       PaymentGateway paymentGatewayObject1 = PaymentGateway.getPaymentGatewayInstance();
+       paymentGatewayObject1.processPayment("ORDER_ID1",  100.00);
+
+
+       PaymentGateway paymentGatewayObject2 = PaymentGateway.getPaymentGatewayInstance();
+       if(paymentGatewayObject2.equals(paymentGatewayObject1)){
+           System.out.println(" Both are the same payment gateways");
+       }
+
+
+   }
+}
+
+
+Benefits:
+✔ Prevents multiple payment processor instances.
+✔ Ensures thread safety in multi-threaded payment transactions.
+
+
+Factory Design Pattern 
+Problem : you want to build a notification system to inform all the users about the upcoming sale. Email, SMS, Mobile Notification.
+
+Solution : Use factory design pattern, to create notifications dynamically.
+
+package org.example.model;
+
+
+public class NotificationFactory {
+   public static Notification createNotification(String type) {
+       if(type.equals("Email")){
+           return new EmailNotification();
+       } else if(type.equals("Whatsapp")){
+           return new WhatsappNotification();
+       } else if (type.equals("SMS")){
+           return new SMSNotification();
+       } else {
+           throw new IllegalArgumentException("Invalid notification type");
+       }
+   }
+}
+
+
+package org.example.model;
+
+
+public interface Notification {
+   void notifyUser();
+}
+
+package org.example.model;
+
+
+public class EmailNotification implements Notification{
+   @Override
+   public void notifyUser() {
+       System.out.println(" Sending an email notification .. ");
+   }
+}
+
+package org.example.model;
+
+
+public class SMSNotification implements Notification{
+   private static 
+
+
+ smsNotificationInstance;
+
+
+   SMSNotification(){
+       System.out.println("SMS Notification instance created");
+   }
+
+
+   public static SMSNotification getInstance(){
+       if(smsNotificationInstance == null){
+           synchronized (SMSNotification.class){
+               if(smsNotificationInstance == null){
+                   return new SMSNotification();
+               }
+           }
+       }
+       return smsNotificationInstance;
+   }
+
+
+   @Override
+   public void notifyUser() {
+       System.out.println("Sending a SMS Notification..");
+   }
+}
+
+package org.example.model;
+
+
+public class WhatsappNotification implements Notification{
+   @Override
+   public void notifyUser() {
+       System.out.println("Sending a whatsapp message ..");
+   }
+}
+
+public class Main {
+   public static void main(String[] args) {
+       Notification smsNotification = NotificationFactory.createNotification("SMS");
+       smsNotification.notifyUser();
+
+
+   }
+}
+
+Benefits:
+✔ Reduces tight coupling between the system and notification types.
+✔ Easily add new notification types without modifying the existing system.
+
+Builder Design Pattern
+Problem : Customers can customize size, color, bankOffer, giftWrap to their respective products, how will this need be accommodated at a code level.
+
+Approach 1: Either we create multiple constructors
+
+
+package org.example.model;
+
+
+
+
+public class Order {
+   private String product;
+   private String size;
+   private boolean giftWrapped;
+   private String color;
+   private boolean bankOffer;
+   private boolean primeDelivery
+
+
+   private Order(OrderBuilder builder){
+       this.product = builder.product;
+       this.size = builder.size;
+       this.giftWrapped = builder.giftWrapped;
+       this.color = builder.color;
+       this.bankOffer = builder.bankOffer;
+       this.primeDelivery = builder.primeDelivery;
+   }
+
+
+
+
+   public void showOrderDetails(){
+       System.out.println("Order Details : " + product + ", Size :"  + size +
+               ", gift wrapped " + (giftWrapped ? " Yes " : " No ") + " of the color " + color);
+   }
+
+
+   // Builder class
+   public static class OrderBuilder {
+       private String product;
+       private String size;
+       private boolean giftWrapped;
+       private String color;
+       private boolean bankOffer;
+       private boolean primeDelivery;
+
+
+       public OrderBuilder(String product){
+           this.product = product;
+       }
+
+
+       public OrderBuilder size(String size){
+           this.size = size;
+           return this;
+       }
+
+
+       public OrderBuilder color(String color){
+           this.color = color;
+           return this;
+       }
+
+
+       public OrderBuilder giftWrapped(boolean giftWrapped){
+           this.giftWrapped = giftWrapped;
+           return this;
+       }
+
+
+       public OrderBuilder bankOffer(boolean bankOffer){
+           this.bankOffer = bankOffer;
+           return this;
+       }
+
+
+       public OrderBuilder primeDelivery(boolean primeDelivery){
+           this.primeDelivery = primeDelivery;
+           return this;
+       }
+
+
+       public Order build(){
+           return new Order(this);
+       }
+   }
+}
+
+
+public class Main {
+   public static void main(String[] args) {
+       Order laptop = new Order.OrderBuilder("Laptop")
+               .size("15 inch")
+               .giftWrapped(true)
+               .bankOffer(false)
+               .color("Black")
+               .build();
+
+
+       laptop.showOrderDetails();
+
+
+
+
+       Order mobile = new Order.OrderBuilder("Mobile")
+               .size("6 inch")
+               .giftWrapped(false)
+               .build();
+
+
+       mobile.showOrderDetails();
+   }
+}
+
+ Benefits:
+✔ Step-by-step construction of an order.
+✔ Avoids constructor explosion for optional features.

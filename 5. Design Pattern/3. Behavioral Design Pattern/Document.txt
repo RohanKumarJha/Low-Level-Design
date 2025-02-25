@@ -1,0 +1,322 @@
+Problem:
+An e-commerce site offers various discounts (seasonal sale, loyalty discount, coupon-based). These discount strategies change frequently and should be interchangeable
+
+Solution:
+Use the Strategy Pattern to define a family of discount algorithms, encapsulate them, and make them interchangeable at runtime.
+
+package org.example;
+import org.example.behavioral.LoyaltyDiscount;
+import org.example.behavioral.SeasonalDiscount;
+import org.example.behavioral.ShoppingCart;
+
+public class Main {
+   public static void main(String[] args) {
+       ShoppingCart shoppingCart = new ShoppingCart(new SeasonalDiscount());
+       System.out.println(" Final Price after discount : " + shoppingCart.checkout(1000));
+
+
+       shoppingCart = new ShoppingCart(new LoyaltyDiscount());
+       System.out.println(" Final Price after discount : " + shoppingCart.checkout(1000));
+
+   }
+}
+
+package org.example.behavioral;
+
+public interface DiscountStrategy {
+   double applyDiscount(double amount);
+}
+
+package org.example.behavioral;
+
+
+public class NoDiscount implements DiscountStrategy{
+   @Override
+   public double applyDiscount(double amount) {
+       return amount;
+   }
+}
+
+package org.example.behavioral;
+
+
+public class LoyaltyDiscount implements DiscountStrategy{
+   @Override
+   public double applyDiscount(double amount) {
+       return amount * 0.85; // 15% off
+   }
+}
+
+package org.example.behavioral;
+
+
+public class ShoppingCart {
+   private DiscountStrategy discountStrategy;
+
+
+   public ShoppingCart(DiscountStrategy discountStrategy){
+       this.discountStrategy = discountStrategy;
+   }
+
+
+   public double checkout(double price){
+       return discountStrategy.applyDiscount(price);
+   }
+}
+
+Benefits:
+✔ Easily switch between different discount strategies.
+✔ Open/Closed Principle compliance (add new discounts without changing existing code).
+
+
+
+
+📌 Problem:
+After placing an order, customers want real-time notifications (via email, SMS, or app push notifications) as the order moves through different stages (packed, shipped, delivered).
+✅ Solution:
+Use the Observer Pattern to automatically notify all registered observers (subscribers) when the order status changes.
+package org.example;
+
+
+
+
+import org.example.behavioral.EmailNotifier;
+import org.example.behavioral.Order;
+import org.example.behavioral.SMSNotifier;
+
+
+public class Main {
+   public static void main(String[] args) {
+       Order order = new Order();
+       order.addObservers( new EmailNotifier());
+       order.addObservers( new SMSNotifier());
+
+
+       order.updateStatus("Shipped");
+       order.updateStatus("Out for Delivery");
+       order.updateStatus("Delivered");
+   }
+}
+
+
+package org.example.behavioral;
+
+
+public interface OrderObserver {
+   void update(String status);
+}
+
+package org.example.behavioral;
+
+
+public class EmailNotifier implements OrderObserver{
+   @Override
+   public void update(String status) {
+       System.out.println(" Email : Your order is now " + status);
+   }
+}
+
+package org.example.behavioral;
+
+
+public class SMSNotifier implements OrderObserver{
+   @Override
+   public void update(String status) {
+       System.out.println(" SMS : Your order is now " + status);
+   }
+}
+
+package org.example.behavioral;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Order {
+   private String status;
+   private List<OrderObserver> observerList = new ArrayList<>();
+
+
+   public void addObservers(OrderObserver obserever){
+       observerList.add(obserever);
+   }
+
+
+   public void updateStatus(String status){
+       this.status = status;
+       notifyObservers();
+   }
+
+
+   private void notifyObservers(){
+       for( OrderObserver orderObserver : observerList){
+           orderObserver.update(status);
+       }
+   }
+}
+
+
+🔹 Benefits:
+✔ Automatic updates to all interested observers.
+✔ Loose coupling between the subject and observers.
+
+📌 Problem:
+Users should be able to place, cancel, or reorder items. The system needs a history of actions for undo/redo functionality.
+✅ Solution:
+Use the Command Pattern to encapsulate actions as objects, allowing undo/redo functionality.
+package org.example.behavioral;
+
+
+public interface Command {
+   void execute();
+   void undo();
+}
+
+package org.example.behavioral;
+
+
+public class PlaceOrderCommand implements Command{
+
+
+   private OrderService orderService;
+
+
+   public PlaceOrderCommand(OrderService orderService) {
+       this.orderService = orderService;
+   }
+
+
+   @Override
+   public void execute() {
+       orderService.placeOrder();
+   }
+
+
+   @Override
+   public void undo() {
+       orderService.cancelOrder();
+   }
+}
+
+
+package org.example.behavioral;
+
+
+public class CancelOrder implements Command{
+
+
+   OrderService orderService;
+
+
+   public CancelOrder(OrderService orderService) {
+       this.orderService = orderService;
+   }
+
+
+   @Override
+   public void execute() {
+       orderService.cancelOrder();
+   }
+
+
+   @Override
+   public void undo() {
+   }
+}
+
+package org.example.behavioral;
+
+
+public interface OrderObserver {
+   void update(String status);
+}
+
+
+ Benefits:
+✔ Encapsulates requests as objects.
+✔ Supports undo/redo operations.
+
+📌 Problem:
+Inventory, payment, and shipping modules need to communicate during order processing. Direct dependencies between these modules make the system complex.
+
+✅ Solution:
+Use the Mediator Pattern to centralize communication, ensuring loose coupling between subsystems.
+
+
+
+package org.example;
+import org.example.behavioral.*;
+
+public class Main {
+   public static void main(String[] args) {
+       OrderMediator orderMediator = new OrderProcessor();
+       orderMediator.processOrder("Smartphone", 10000.00);
+   }
+}
+
+package org.example.behavioral;
+
+public interface Command {
+   void execute();
+   void undo();
+}
+
+package org.example.behavioral;
+
+public class PlaceOrderCommand implements Command{
+
+   private OrderService orderService;
+   public PlaceOrderCommand(OrderService orderService) {
+       this.orderService = orderService;
+   }
+
+   @Override
+   public void execute() {
+       orderService.placeOrder();
+   }
+
+   @Override
+   public void undo() {
+       orderService.cancelOrder();
+   }
+}
+
+package org.example.behavioral;
+
+public interface OrderObserver {
+   void update(String status);
+}
+
+package org.example.behavioral;
+
+public interface OrderMediator {
+   public void processOrder(String item, double amount);
+}
+
+package org.example.behavioral;
+import org.example.structural.Inventory;
+import org.example.structural.Payment;
+import org.example.structural.Shipping;
+
+public class OrderProcessor implements OrderMediator{
+   private Inventory inventory;
+   private Payment payment;
+   private Shipping shipping;
+
+
+   public OrderProcessor(){
+       inventory = new Inventory();
+       payment = new Payment();
+       shipping = new Shipping();
+   }
+
+   @Override
+   public void processOrder(String item, double amount) {
+       inventory.updateStock(item);
+       payment.processPayment(amount);
+       shipping.arrangeShipping(item);
+       System.out.println("Order placed successfully");
+   }
+
+}
