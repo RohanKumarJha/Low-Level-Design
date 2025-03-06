@@ -12,41 +12,27 @@ public class Main {
    public static void main(String[] args) {
        PaymentPreprocessor razorpayPaymentPreprocessor = new RazorpayAdapter(new Razorpay());
        razorpayPaymentPreprocessor.pay(1000.00);
-
-
-
-
        PaymentPreprocessor stripePaymentPreprocessor = new StripeAdapter(new Stripe());
        stripePaymentPreprocessor.pay(100.00);
-
 
    }
 }
 
 package org.example;
 
-
 import org.example.creational.Order;
 import org.example.structural.*;
-
 
 public class Main {
    public static void main(String[] args) {
        PaymentPreprocessor razorpayPaymentPreprocessor = new RazorpayAdapter(new Razorpay());
        razorpayPaymentPreprocessor.pay(1000.00);
-
-
-
-
        PaymentPreprocessor stripePaymentPreprocessor = new StripeAdapter(new Stripe());
        stripePaymentPreprocessor.pay(100.00);
-
-
    }
 }
 
 package org.example.structural;
-
 
 public class Razorpay {
    public void makePayment(double amount){
@@ -58,7 +44,6 @@ public class Razorpay {
 
 package org.example.structural;
 
-
 public class Stripe {
    public void payment(double amount){
        System.out.println("Payment of : " + amount + " has been paid via Stripe..");
@@ -68,15 +53,11 @@ public class Stripe {
 
 package org.example.structural;
 
-
 public class RazorpayAdapter implements PaymentPreprocessor{
    private Razorpay razorpay;
    public RazorpayAdapter(Razorpay razorpay){
        this.razorpay = razorpay;
    }
-
-
-
 
    @Override
    public void pay(double amount) {
@@ -88,14 +69,11 @@ package org.example.structural;
 
 public class StripeAdapter implements PaymentPreprocessor{
 
-
    Stripe stripe;
-
 
    public StripeAdapter(Stripe stripe){
        this.stripe = stripe;
    }
-
 
    @Override
    public void pay(double amount) {
@@ -114,18 +92,13 @@ package org.example;
 import org.example.creational.Order;
 import org.example.structural.*;
 
-
 public class Main {
    public static void main(String[] args) {
        Product laptop = new BasicProduct("Laptop", 10000.00);
        laptop = new GiftWrap(laptop);
        laptop = new ExtendedWarranty(laptop);
-
-
        System.out.println(laptop.description() + " | " + laptop.getPrice());
 
-
-      
    }
 }
 
@@ -139,23 +112,19 @@ public interface Product {
 
 package org.example.structural;
 
-
 public class BasicProduct implements Product{
    private String description;
    private double price;
-
 
    public BasicProduct(String description, double price) {
        this.description = description;
        this.price = price;
    }
 
-
    @Override
    public String description() {
        return description;
    }
-
 
    @Override
    public double getPrice() {
@@ -185,7 +154,6 @@ public class GiftWrap extends ProductDecorator{
        return product.description() + " has been decorated by a gift wrap";
    }
 
-
    @Override
    public double getPrice() {
        return product.getPrice() + 5.00;
@@ -195,20 +163,16 @@ public class GiftWrap extends ProductDecorator{
 
 package org.example.structural;
 
-
 public class ExtendedWarranty extends ProductDecorator{
-
 
    public ExtendedWarranty(Product product) {
        super(product);
    }
 
-
    @Override
    public String description() {
        return product.description() + " has extended warranty now!";
    }
-
 
    @Override
    public double getPrice() {
@@ -239,14 +203,10 @@ public class Main {
        Item ps5Controller = new Item("Gaming Controller", 10000.00);
        Item fifa = new Item(" Video Game FIFA ", 3000.00);
 
-
-
-
        ProductBundle summerSaleGamingBundle = new ProductBundle(" Gaming Bundle for the summer season");
        summerSaleGamingBundle.addProductToProductBundle(ps5);
        summerSaleGamingBundle.addProductToProductBundle(ps5Controller);
        summerSaleGamingBundle.addProductToProductBundle(fifa);
-
 
        System.out.println(summerSaleGamingBundle.description()+ ", Total Price : " + summerSaleGamingBundle.getPrice());
    }
@@ -267,18 +227,15 @@ public class Item implements Product{
    private String description;
    private double price;
 
-
    public Item(String description, double price) {
        this.description = description;
        this.price = price;
    }
 
-
    @Override
    public String description() {
        return description;
    }
-
 
    @Override
    public double getPrice() {
@@ -295,26 +252,21 @@ import java.util.List;
 
 public class ProductBundle implements Product{
 
-
    private String description;
    private List<Product> productList = new ArrayList<>();
-
 
    public ProductBundle(String description){
        this.description = description;
    }
 
-
    public void addProductToProductBundle(Product product){
        productList.add(product);
    }
-
 
    @Override
    public String description() {
        return description;
    }
-
 
    @Override
    public double getPrice() {
@@ -323,7 +275,6 @@ public class ProductBundle implements Product{
 //            totalPrice+=product.getPrice();
 //        }
 //        return totalPrice;
-
 
        return productList.stream().mapToDouble(Product::getPrice).sum();
    }
@@ -342,7 +293,6 @@ package org.example;
 
 import org.example.structural.OrderFacade;
 
-
 public class Main {
    public static void main(String[] args) {
        OrderFacade orderFacade = new OrderFacade();
@@ -358,13 +308,11 @@ public class OrderFacade {
    private Payment payment;
    private Shipping shipping;
 
-
    public OrderFacade(){
        inventory = new Inventory();
        payment = new Payment();
        shipping = new Shipping();
    }
-
 
    public void placeOrder(String item, double amount){
        System.out.println("Processing the order for : " + item);

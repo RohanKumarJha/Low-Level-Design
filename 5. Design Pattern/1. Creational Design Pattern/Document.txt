@@ -9,16 +9,13 @@ Only one instance is needed for the payment gateway → Singleton pattern
 
 package org.example.model;
 
+						Singleton Design Pattern
 
-
-
-// Singleton Design Pattern
 public class PaymentGateway {
    private static volatile PaymentGateway paymentGatewayInstance;
    PaymentGateway(){
        System.out.println("Initializing Payment Gateway...");
    }
-
 
    public static PaymentGateway getPaymentGatewayInstance(){
        if(paymentGatewayInstance == null){
@@ -37,7 +34,6 @@ public class PaymentGateway {
    }
 }
 
-
 public class Main {
    public static void main(String[] args) {
        PaymentGateway paymentGatewayObject1 = PaymentGateway.getPaymentGatewayInstance();
@@ -48,24 +44,24 @@ public class Main {
        if(paymentGatewayObject2.equals(paymentGatewayObject1)){
            System.out.println(" Both are the same payment gateways");
        }
-
-
    }
 }
-
 
 Benefits:
 ✔ Prevents multiple payment processor instances.
 ✔ Ensures thread safety in multi-threaded payment transactions.
 
 
-Factory Design Pattern 
+
+
+
+						Factory Design Pattern 
+
 Problem : you want to build a notification system to inform all the users about the upcoming sale. Email, SMS, Mobile Notification.
 
 Solution : Use factory design pattern, to create notifications dynamically.
 
 package org.example.model;
-
 
 public class NotificationFactory {
    public static Notification createNotification(String type) {
@@ -81,9 +77,7 @@ public class NotificationFactory {
    }
 }
 
-
 package org.example.model;
-
 
 public interface Notification {
    void notifyUser();
@@ -125,7 +119,6 @@ public class SMSNotification implements Notification{
        return smsNotificationInstance;
    }
 
-
    @Override
    public void notifyUser() {
        System.out.println("Sending a SMS Notification..");
@@ -155,16 +148,17 @@ Benefits:
 ✔ Reduces tight coupling between the system and notification types.
 ✔ Easily add new notification types without modifying the existing system.
 
-Builder Design Pattern
+
+
+
+							Builder Design Pattern
+
 Problem : Customers can customize size, color, bankOffer, giftWrap to their respective products, how will this need be accommodated at a code level.
 
 Approach 1: Either we create multiple constructors
 
 
 package org.example.model;
-
-
-
 
 public class Order {
    private String product;
@@ -173,7 +167,6 @@ public class Order {
    private String color;
    private boolean bankOffer;
    private boolean primeDelivery
-
 
    private Order(OrderBuilder builder){
        this.product = builder.product;
@@ -184,14 +177,10 @@ public class Order {
        this.primeDelivery = builder.primeDelivery;
    }
 
-
-
-
    public void showOrderDetails(){
        System.out.println("Order Details : " + product + ", Size :"  + size +
                ", gift wrapped " + (giftWrapped ? " Yes " : " No ") + " of the color " + color);
    }
-
 
    // Builder class
    public static class OrderBuilder {
@@ -244,7 +233,6 @@ public class Order {
    }
 }
 
-
 public class Main {
    public static void main(String[] args) {
        Order laptop = new Order.OrderBuilder("Laptop")
@@ -254,11 +242,7 @@ public class Main {
                .color("Black")
                .build();
 
-
        laptop.showOrderDetails();
-
-
-
 
        Order mobile = new Order.OrderBuilder("Mobile")
                .size("6 inch")
